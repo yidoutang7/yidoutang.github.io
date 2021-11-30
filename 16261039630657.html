@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    基础知识--channel - yidoutang
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="yidoutang" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            基础知识--channel   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2021/07/12</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">开篇提问</h2>
+
+<pre><code class="language-go面试题">channel 的状态(nil 打开的 关闭的 只读 只写)在哪些操作(Read Write Close)下会导致 panic?
+如何避免出现这些 panic 有哪些原则?
+例如 channel 已经处于 close 状态，当再次 close 会导致 panic
+
+</code></pre>
+
+<p>CSP Communicati ng Sequential Process 通信顺序进程 CSP 允许使用进程组件来描述系统，它们独立运行，并且只通过消息传递的方式通信。</p>
+
+<p>go 的 channel 实现了 CSP 思想。</p>
+
+<h2 id="toc_1">Channel 基础知识</h2>
+
+<p>channel 是 go 语言的内置类型。<br/>
+零值是 nil 。特殊的chan。收发都会阻塞。</p>
+
+<ol>
+<li><p>收发数据</p>
+<pre><code class="language-go">    stream := make(chan int)
+    // 发送<br/>
+    stream &lt;- 100<br/>
+    msg := make(chan int)<br/>
+    // 接受<br/>
+   x := &lt;- msg // 取出数据赋值给x<br/>
+   // range 方式迭代获取 推荐<br/>
+   // 迭代获取 msg 直到 msg 无值会阻塞。<br/>
+   // 当 msg 被 close 退出迭代<br/>
+   for := range msg {<br/>
+        // do<br/>
+   }<br/>
+   // select 监听多个 chan io<br/>
+   select {<br/>
+    case stream &lt;- 101:<br/>
+    case x := &lt;- msg:<br/>
+   }
+</code></pre></li>
+<li><p>有缓冲，无缓冲</p></li>
+<li><p>panic or 阻塞 情况</p></li>
+</ol>
+
+<h2 id="toc_2">Channel 应用场景</h2>
+
+<pre><code class="language-text">Don’t communicate by sharing memory, share memory by communicating. -- 不要通过共享内存的方式通信，而是要通过 Channel 通信的方式分享数据。
+</code></pre>
+
+<ol>
+<li><strong>数据传递</strong> 把数据并发安全的传递到另一个 <strong>goroutine</strong></li>
+<li><strong>信号传递</strong> 不同 <strong>goroutine</strong> 传递需要同步的信号。(一个或者很多个协程)。</li>
+<li><strong>实现 pipline</strong></li>
+<li>让代码看起来很快的样子 or 就是想要 panic 的效果。</li>
+</ol>
+
+<h2 id="toc_3">Channel 实现原理</h2>
+
+<pre><code class="language-go">        type hchan struct {
+        qcount   uint           // total data in the queue
+        dataqsiz uint           // size of the circular queue
+        buf      unsafe.Pointer // points to an array of dataqsiz elements
+        elemsize uint16  // chan 元素的大小
+        closed   uint32  // 是否已经 close
+        elemtype *_type // element type
+        sendx    uint   // send 在buf中的 index
+        recvx    uint   // receive 在buf中的 index
+        recvq    waitq  // list of recv waiters
+        sendq    waitq  // list of send waiters
+    
+        // lock protects all fields in hchan, as well as several
+        // fields in sudogs blocked on this channel.
+        //
+        // Do not change another G&#39;s status while holding this lock
+        // (in particular, do not ready a G), as this can deadlock
+        // with stack shrinking.
+        
+        lock mutex // 互斥锁 保护所有字段。
+        }
+        
+</code></pre>
+
+<h2 id="toc_4">Channel 注意事项 犯过的错</h2>
+
+<h3 id="toc_5">panic</h3>
+
+<ol>
+<li>close 为 nil 的 chan</li>
+<li>close 已经 close 的 chan</li>
+<li>send 已经 close 的 chan</li>
+</ol>
+
+<h3 id="toc_6">goroutine 泄漏</h3>
+
+<p>主要原因在于新创建的 goroutine 因为一些原因导致阻塞无法被GC释放。</p>
+
+<ol>
+<li>任何导致 channel 阻塞的情况
+<ol>
+<li>读取 channel，但是未写入任何值</li>
+<li>无缓冲 channel, 读取在写入发生后，或者干脆无读。</li>
+<li>写入已满的有缓冲 channel ，无读</li>
+</ol></li>
+<li>goroutine 函数死循环</li>
+</ol>
+
+<h3 id="toc_7">思考练习</h3>
+
+<p>还是一个面试题。。。</p>
+
+<pre><code class="language-go">// 写代码实现两个 goroutine，其中一个产生随机数并写入到 go channel 中，另外一个从 channel 中读取数字并打印到标准输出。最终输出五个随机数。
+// 和后面知识点有关、
+// 尽量一次能过，要优雅，逻辑尽量简单。
+</code></pre>
+
+<h2 id="toc_8">Channel 应用场景--一些典型事例代码(持续更新)</h2>
+
+<h3 id="toc_9">数据传递</h3>
+
+<pre><code class="language-conn.go">
+func (c *Conn) sendLoop(ctx context.Context, done chan&lt;- struct{}) {
+    defer close(done)
+    for {
+        select {
+        case &lt;-ctx.Done():
+            return
+        case data := &lt;-c.sendCh:
+            c.parse.Send(c.conn, data)
+        }
+    }
+}
+
+func (c *Conn) recvLoop(ctx context.Context, done chan&lt;- struct{}) {
+    defer close(done)
+    for {
+        select {
+        case &lt;-ctx.Done():
+            return
+        default:
+            c.recvedCh &lt;- := c.parse.Recv(c.conn)
+        }
+    }
+}  
+    
+</code></pre>
+
+<pre><code class="language-main.go">c.sendCh = make(chan []byte, 100)
+c.recvedCh = make(chan []byte)
+ctx, cancel := context.WithCancel(context.Background())
+c.cancel = cancel
+
+go c.recvLoop(ctx, recvDoneCh)
+go c.sendLoop(ctx, sendDoneCh)
+
+select {
+case &lt;-recvDoneCh:
+    return nil
+case &lt;-sendDoneCh:
+    return nil
+}
+
+</code></pre>
+
+<h2 id="toc_10">建议</h2>
+
+<h3 id="toc_11">看源码</h3>
+
+<ol>
+<li>nsq</li>
+</ol>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>
